@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Casino</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="bg-slate-800 p-6 rounded-2xl shadow-xl w-full max-w-sm text-center">
+        <h1 class="text-xl font-bold mb-4">🎰 Micro Slots</h1>
+
+        <div id="balance" class="text-sm text-slate-400 mb-6">
+            Баланс: 100 🪙
+        </div>
+
+        <div id="slot" class="text-4xl bg-slate-900 py-6 rounded-xl mb-6 tracking-widest">
+            ❓ ❓ ❓
+        </div>
+
+        <button
+            onclick="playSlot()"
+            class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl transition"
+        >
+            Крутить (10 🪙)
+        </button>
+    </div>
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+
+        if (tg) {
+            tg.expand();
+        }
+
+        let balance = 100;
+        const symbols = ['🍒', '🍋', '7️⃣', '💎'];
+
+        function playSlot() {
+            if (balance < 10) {
+                alert('Недостаточно монет!');
+                return;
+            }
+
+            balance -= 10;
+
+            const r1 = symbols[Math.floor(Math.random() * symbols.length)];
+            const r2 = symbols[Math.floor(Math.random() * symbols.length)];
+            const r3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+            document.getElementById('slot').innerText =
+                `${r1} ${r2} ${r3}`;
+
+            if (r1 === r2 && r2 === r3) {
+                balance += 100;
+
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            } else {
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('light');
+                }
+            }
+
+            document.getElementById('balance').innerText =
+                `Баланс: ${balance} 🪙`;
+        }
+    </script>
+</body>
+</html>
